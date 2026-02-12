@@ -1,327 +1,216 @@
-<!DOCTYPE html><html lang="id">
+<!DOCTYPE html>
+<html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ensiklopedia Tumbuhan Dunia Super Lengkap</title><style>
-:root{
---bg:#f4f7f9;
---card:#ffffff;
---primary:#145a32;
---text:#1b1b1b;
-}
-body.dark{
---bg:#121212;
---card:#1e1e1e;
---primary:#52be80;
---text:#f5f5f5;
-}
-body{
-margin:0;
-font-family:Arial,Helvetica,sans-serif;
-background:var(--bg);
-color:var(--text);
-line-height:1.6;
-}
-header{
-background:var(--primary);
-color:white;
-padding:25px;
-text-align:center;
-}
-.container{
-max-width:1400px;
-margin:auto;
-padding:20px;
-}
-input{
-padding:10px;
-border-radius:8px;
-border:1px solid #ccc;
-width:100%;
-margin-bottom:20px;
-}
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
-gap:20px;
-}
-.card{
-background:var(--card);
-padding:20px;
-border-radius:15px;
-box-shadow:0 4px 15px rgba(0,0,0,0.1);
-cursor:pointer;
-transition:0.3s;
-}
-.card:hover{
-transform:scale(1.03);
-}
-.modal{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-display:none;
-background:rgba(0,0,0,0.7);
-justify-content:center;
-align-items:center;
-}
-.modal-content{
-background:var(--card);
-padding:30px;
-border-radius:15px;
-max-width:1000px;
-max-height:90vh;
-overflow:auto;
-}
-h2{
-border-bottom:3px solid var(--primary);
-padding-bottom:10px;
-}
-.section{
-margin-bottom:20px;
-}
-footer{
-text-align:center;
-padding:20px;
-background:#222;
-color:white;
-margin-top:40px;
-}
-</style></head>
-<body><header>
-<h1>🌿 ENSIKLOPEDIA TUMBUHAN DUNIA</h1>
-<p>Versi Super Lengkap Setara Ensiklopedia & Wikipedia (800+ Baris)</p>
-<button onclick="toggleDarkMode()">🌙 Dark Mode</button>
-</header><div class="container">
-<input type="text" id="search" placeholder="Cari tumbuhan..." onkeyup="render()">
-<div class="grid" id="list"></div>
-</div><div class="modal" id="modal">
-<div class="modal-content" id="detail"></div>
-</div><footer>
-© 2026 Ensiklopedia Tumbuhan Dunia Lengkap
-</footer><script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BioFlora Mega Database | Ensiklopedia Tumbuhan</title>
+    <style>
+        :root {
+            --bg: #f4f7f6;
+            --card: #ffffff;
+            --primary: #1b5e20;
+            --accent: #4caf50;
+            --text: #2c3e50;
+            --subtext: #546e7a;
+        }
+        body.dark {
+            --bg: #121212;
+            --card: #1e1e1e;
+            --primary: #81c784;
+            --text: #eceff1;
+            --subtext: #b0bec5;
+        }
+        body { margin: 0; font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); }
+        header { background: linear-gradient(135deg, #1b5e20, #2e7d32); color: white; padding: 40px 20px; text-align: center; }
+        .container { max-width: 1200px; margin: auto; padding: 20px; }
+        
+        /* Search & Stats */
+        .controls { display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px; position: sticky; top: 10px; z-index: 100; }
+        input, select { padding: 15px; border-radius: 12px; border: 2px solid #ddd; background: var(--card); color: var(--text); font-size: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .stats { background: var(--primary); color: white; padding: 10px 20px; border-radius: 10px; font-size: 0.9rem; margin-bottom: 20px; display: inline-block; }
 
-/* ===============================
-   PENJELASAN UMUM TENTANG TUMBUHAN
-   =============================== */
+        /* Grid System */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+        .card { background: var(--card); padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); cursor: pointer; transition: 0.3s; border-left: 6px solid var(--primary); }
+        .card:hover { transform: translateY(-5px); }
+        .card h3 { margin: 0; font-size: 1.1rem; }
+        .card p { margin: 5px 0 0; font-style: italic; font-size: 0.85rem; color: var(--subtext); }
 
-/*
-Tumbuhan (Plantae) adalah organisme eukariotik multiseluler
-yang memiliki dinding sel dari selulosa dan klorofil.
-Tumbuhan melakukan fotosintesis menggunakan cahaya matahari.
-Tumbuhan dibagi menjadi beberapa divisi utama:
-1. Bryophyta (Lumut)
-2. Pteridophyta (Paku)
-3. Gymnospermae (Berbiji terbuka)
-4. Angiospermae (Berbiji tertutup)
+        /* Modal */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: none; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; padding: 10px; }
+        .modal-content { background: var(--card); width: 100%; max-width: 800px; padding: 30px; border-radius: 20px; max-height: 90vh; overflow-y: auto; }
+        .info-block { margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .label { font-weight: bold; color: var(--primary); font-size: 0.75rem; text-transform: uppercase; display: block; }
+        .close-btn { background: #e74c3c; color: white; border: none; padding: 15px; width: 100%; border-radius: 10px; cursor: pointer; font-weight: bold; margin-top: 20px; }
+    </style>
+</head>
+<body>
 
-Struktur utama tumbuhan:
-- Akar
-- Batang
-- Daun
-- Bunga
-- Buah
-- Biji
+<header>
+    <h1>🌿 BioFlora (By doni)</h1>
+    <p>Database Botani Skala Besar (Multiseluler & Angiospermae)</p>
+    <button onclick="toggleDarkMode()" style="cursor:pointer; padding:5px 15px; border-radius:15px; border:none;">🌓 Mode Visual</button>
+</header>
 
-Proses fisiologi utama:
-- Fotosintesis
-- Respirasi
-- Transpirasi
-- Transportasi air & mineral
+<div class="container">
+    <div id="counter" class="stats">Memuat data...</div>
+    
+    <div class="controls">
+        <input type="text" id="search" placeholder="Cari Spesies atau Nama Latin..." onkeyup="render()">
+        <select id="filterOrdo" onchange="render()">
+            <option value="">Semua Ordo (Tampilkan Semua)</option>
+            <option value="Poales">Poales (Padi & Rumput)</option>
+            <option value="Solanales">Solanales (Terung & Tomat)</option>
+            <option value="Sapindales">Sapindales (Mangga & Jeruk)</option>
+            <option value="Fabales">Fabales (Polong-polongan)</option>
+            <option value="Malvales">Malvales (Kapas & Durian)</option>
+            <option value="Gentianales">Gentianales (Kopi & Kamboja)</option>
+        </select>
+    </div>
+    
+    <div class="grid" id="list"></div>
+</div>
 
-Peran ekologis tumbuhan:
-- Produsen utama dalam ekosistem
-- Penghasil oksigen
-- Penyerap karbon dioksida
-- Penyedia habitat bagi makhluk hidup lain
-*/
+<div class="modal" id="modal">
+    <div class="modal-content" id="detail"></div>
+</div>
 
-const database = [
-
-{
-nama:"Padi",
-latin:"Oryza sativa",
-kingdom:"Plantae",
-divisi:"Magnoliophyta",
-kelas:"Liliopsida",
-ordo:"Poales",
-famili:"Poaceae",
-genus:"Oryza",
-spesies:"Oryza sativa",
-deskripsi:"Tanaman serealia utama penghasil beras yang menjadi makanan pokok lebih dari setengah populasi dunia.",
-morfologi:"Memiliki akar serabut, batang beruas, daun sejajar, bunga berbentuk malai.",
-fisiologi:"Fotosintesis C3, membutuhkan air melimpah.",
-reproduksi:"Generatif melalui penyerbukan sendiri.",
-habitat:"Sawah dan lahan basah tropis.",
-persebaran:"Asia, Afrika, Amerika.",
-manfaat:"Sumber karbohidrat utama dunia.",
-status:"Dibudidayakan luas"
-},
-
-{
-nama:"Jagung",
-latin:"Zea mays",
-kingdom:"Plantae",
-divisi:"Magnoliophyta",
-kelas:"Liliopsida",
-ordo:"Poales",
-famili:"Poaceae",
-genus:"Zea",
-spesies:"Zea mays",
-deskripsi:"Tanaman pangan penting selain padi dan gandum.",
-morfologi:"Batang tegak, daun panjang, bunga jantan dan betina terpisah.",
-fisiologi:"Fotosintesis C4 lebih efisien di suhu tinggi.",
-reproduksi:"Penyerbukan silang oleh angin.",
-habitat:"Dataran rendah hingga tinggi.",
-persebaran:"Seluruh dunia.",
-manfaat:"Pangan, pakan ternak, industri.",
-status:"Dibudidayakan luas"
-},
-
-{
-nama:"Pinus",
-latin:"Pinus merkusii",
-kingdom:"Plantae",
-divisi:"Pinophyta",
-kelas:"Pinopsida",
-ordo:"Pinales",
-famili:"Pinaceae",
-genus:"Pinus",
-spesies:"Pinus merkusii",
-deskripsi:"Tumbuhan berbiji terbuka penghasil resin.",
-morfologi:"Daun berbentuk jarum, batang berkayu keras.",
-fisiologi:"Tahan suhu rendah.",
-reproduksi:"Strobilus jantan dan betina.",
-habitat:"Pegunungan.",
-persebaran:"Asia Tenggara.",
-manfaat:"Kayu dan getah.",
-status:"Tidak terancam"
-},
-
-{
-nama:"Mangga",
-latin:"Mangifera indica",
-kingdom:"Plantae",
-divisi:"Magnoliophyta",
-kelas:"Magnoliopsida",
-ordo:"Sapindales",
-famili:"Anacardiaceae",
-genus:"Mangifera",
-spesies:"Mangifera indica",
-deskripsi:"Tanaman buah tropis populer.",
-morfologi:"Pohon besar, daun lonjong, buah berdaging.",
-fisiologi:"Fotosintesis C3.",
-reproduksi:"Bunga majemuk menghasilkan buah.",
-habitat:"Daerah tropis.",
-persebaran:"Asia Selatan, Asia Tenggara.",
-manfaat:"Buah konsumsi.",
-status:"Dibudidayakan luas"
-},
-
-{
-nama:"Kelapa",
-latin:"Cocos nucifera",
-kingdom:"Plantae",
-divisi:"Magnoliophyta",
-kelas:"Liliopsida",
-ordo:"Arecales",
-famili:"Arecaceae",
-genus:"Cocos",
-spesies:"Cocos nucifera",
-deskripsi:"Tanaman serbaguna di daerah tropis.",
-morfologi:"Batang tunggal tinggi, daun menyirip.",
-fisiologi:"Tahan salinitas.",
-reproduksi:"Biji dalam buah berserat.",
-habitat:"Pantai tropis.",
-persebaran:"Seluruh daerah tropis.",
-manfaat:"Air kelapa, minyak, serat.",
-status:"Dibudidayakan luas"
-}
-
+<script>
+// DATABASE MEGA (Menampung banyak spesies dengan informasi lengkap)
+const plantDB = [
+    // --- POALES (Contoh Penjelasan Lengkap) ---
+    {
+        nama: "Padi", latin: "Oryza sativa", ordo: "Poales", famili: "Poaceae",
+        deskripsi: "Tanaman serealia paling krusial bagi ketahanan pangan global. Memiliki kemampuan tumbuh di air tergenang melalui ruang udara di batang (aerenkim).",
+        morfologi: "Akar serabut, batang berongga, daun linear (pita), bunga berupa bulir majemuk (malai).",
+        fisiologi: "Jalur fotosintesis C3, memerlukan irigasi tinggi, sangat efisien dalam transportasi mineral ke biji.",
+        habitat: "Lahan basah tropis, sawah irigasi.", manfaat: "Pangan utama (beras), jerami untuk pakan."
+    },
+    {
+        nama: "Jagung", latin: "Zea mays", ordo: "Poales", famili: "Poaceae",
+        deskripsi: "Tanaman C4 yang sangat produktif. Memiliki struktur bunga jantan dan betina yang terpisah (monoecious).",
+        morfologi: "Batang masif tanpa rongga, daun lebar, akar tunjang untuk stabilitas.",
+        fisiologi: "Jalur C4 yang meminimalkan fotorespirasi pada cuaca panas.",
+        habitat: "Dataran rendah beriklim hangat.", manfaat: "Pangan, pakan ternak, bahan industri etanol."
+    },
+    // --- SOLANALES ---
+    {
+        nama: "Tomat", latin: "Solanum lycopersicum", ordo: "Solanales", famili: "Solanaceae",
+        deskripsi: "Tumbuhan herba yang kaya akan likopen. Dikenal karena buahnya yang berdaging dan berair.",
+        morfologi: "Batang berbulu, daun menyirip, buah tipe buni berwarna merah atau kuning.",
+        fisiologi: "Fotosintesis C3, sangat responsif terhadap pemupukan fosfat dan kalsium.",
+        habitat: "Tanah gembur dengan penyinaran matahari penuh.", manfaat: "Sayuran, sumber vitamin A dan C."
+    },
+    {
+        nama: "Cabai Merah", latin: "Capsicum annuum", ordo: "Solanales", famili: "Solanaceae",
+        deskripsi: "Tanaman bumbu yang mengandung capsaicin, senyawa yang memberikan rasa pedas.",
+        morfologi: "Perdu kecil, bunga tunggal putih, buah memanjang dengan banyak biji.",
+        fisiologi: "Metabolisme sekunder menghasilkan alkaloid capsaicin sebagai mekanisme pertahanan.",
+        habitat: "Iklim tropis dan subtropis.", manfaat: "Bumbu dapur, stimulan pencernaan."
+    },
+    // --- SAPINDALES ---
+    {
+        nama: "Mangga", latin: "Mangifera indica", ordo: "Sapindales", famili: "Anacardiaceae",
+        deskripsi: "Pohon besar yang merupakan salah satu buah tropis terpenting di dunia.",
+        morfologi: "Batang berkayu keras, daun tunggal lanset, buah tipe batu (drupa).",
+        fisiologi: "Proses pembungaan dipicu oleh cekaman air (musim kemarau).",
+        habitat: "Dataran rendah kering hingga sedang.", manfaat: "Konsumsi buah segar, olahan makanan."
+    },
+    // --- FABALES ---
+    {
+        nama: "Kedelai", latin: "Glycine max", ordo: "Fabales", famili: "Fabaceae",
+        deskripsi: "Sumber utama protein nabati dunia yang bersimbiosis dengan bakteri penambat nitrogen.",
+        morfologi: "Herba semusim, batang berbulu, buah berupa polong.",
+        fisiologi: "Mampu melakukan fiksasi nitrogen bebas dari udara melalui bintil akar.",
+        habitat: "Tanah dengan aerasi baik.", manfaat: "Bahan tempe, tahu, susu kedelai."
+    }
+    // ... ANDA DAPAT MENAMBAHKAN HINGGA RATUSAN DATA DI SINI DENGAN FORMAT YANG SAMA
 ];
 
-/* Tambahan penjelasan panjang untuk memperkaya konten ensiklopedia */
+// DATA TAMBAHAN UNTUK MEMPERBANYAK SPESIES SECARA CEPAT
+const extraPlants = [
+    {nama:"Sorgum", latin:"Sorghum bicolor", ordo:"Poales", famili:"Poaceae", deskripsi:"Serealia tahan kekeringan ekstrim.", morfologi:"Mirip jagung namun biji di ujung malai.", fisiologi:"Tanaman C4 sangat efisien.", habitat:"Lahan marginal.", manfaat:"Pangan & energi."},
+    {nama:"Gandum", latin:"Triticum aestivum", ordo:"Poales", famili:"Poaceae", deskripsi:"Bahan dasar roti dunia.", morfologi:"Bulir tegak berderet.", fisiologi:"Tanaman C3 subtropis.", habitat:"Daerah beriklim sedang.", manfaat:"Tepung terigu."},
+    {nama:"Tebu", latin:"Saccharum officinale", ordo:"Poales", famili:"Poaceae", deskripsi:"Sumber gula pasir utama.", morfologi:"Batang tinggi beruas mengandung nira manis.", fisiologi:"Akumulasi sukrosa di batang.", habitat:"Tropis basah.", manfaat:"Gula, etanol."},
+    {nama:"Nanas", latin:"Ananas comosus", ordo:"Poales", famili:"Bromeliaceae", deskripsi:"Buah tropis eksotis dengan mahkota daun.", morfologi:"Daun berduri, buah buni majemuk.", fisiologi:"Metabolisme CAM (stomata buka malam).", habitat:"Lahan kering tropis.", manfaat:"Buah konsumsi."},
+    {nama:"Rambutan", latin:"Nephelium lappaceum", ordo:"Sapindales", famili:"Sapindaceae", deskripsi:"Buah dengan kulit berambut unik.", morfologi:"Pohon sedang, buah merah berambut.", fisiologi:"Fotosintesis C3.", habitat:"Tropis lembab.", manfaat:"Buah segar."},
+    {nama:"Lengkeng", latin:"Dimocarpus longan", ordo:"Sapindales", famili:"Sapindaceae", deskripsi:"Buah manis berdaging bening.", morfologi:"Kulit buah coklat tipis.", fisiologi:"Memerlukan suhu dingin untuk pembungaan.", habitat:"Subtropis/Dataran tinggi.", manfaat:"Buah konsumsi."},
+    {nama:"Jeruk Nipis", latin:"Citrus aurantifolia", ordo:"Sapindales", famili:"Rutaceae", deskripsi:"Jeruk kecil dengan rasa sangat asam.", morfologi:"Pohon berduri, buah bulat hijau.", fisiologi:"Kaya asam sitrat.", habitat:"Tropis.", manfaat:"Bumbu, obat batuk."},
+    {nama:"Kacang Tanah", latin:"Arachis hypogaea", ordo:"Fabales", famili:"Fabaceae", deskripsi:"Buah berkembang di dalam tanah (geokarpi).", morfologi:"Herba rendah, bunga kuning.", fisiologi:"Penambat nitrogen bebas.", habitat:"Tanah berpasir.", manfaat:"Sumber lemak & protein."},
+    {nama:"Asam Jawa", latin:"Tamarindus indica", ordo:"Fabales", famili:"Fabaceae", deskripsi:"Pohon besar berumur panjang.", morfologi:"Daun menyirip kecil, buah polong coklat.", fisiologi:"Tahan kekeringan hebat.", habitat:"Sabana/Dataran rendah.", manfaat:"Bumbu, obat, peneduh."},
+    {nama:"Putri Malu", latin:"Mimosa pudica", ordo:"Fabales", famili:"Fabaceae", deskripsi:"Tanaman yang peka terhadap rangsang sentuhan.", morfologi:"Berduri, daun menutup saat disentuh.", fisiologi:"Gerak seismonasti.", habitat:"Lahan terbuka.", manfaat:"Obat herbal."},
+    {nama:"Kentang", latin:"Solanum tuberosum", ordo:"Solanales", famili:"Solanaceae", deskripsi:"Umbi batang sumber karbohidrat dunia.", morfologi:"Batang bawah tanah yang membengkak.", fisiologi:"Penyimpanan pati kompleks.", habitat:"Dataran tinggi sejuk.", manfaat:"Pangan pokok."},
+    {nama:"Kecubung", latin:"Datura metel", ordo:"Solanales", famili:"Solanaceae", deskripsi:"Tanaman beracun dengan bunga terompet.", morfologi:"Bunga besar tegak.", fisiologi:"Mengandung alkaloid tropan.", habitat:"Liar/Kebun.", manfaat:"Obat luar (terbatas)."},
+    {nama:"Ubi Jalar", latin:"Ipomoea batatas", ordo:"Solanales", famili:"Convolvulaceae", deskripsi:"Umbi akar yang manis dan kaya serat.", morfologi:"Merambat di permukaan tanah.", fisiologi:"Akumulasi beta-karoten tinggi.", habitat:"Tropis/Subtropis.", manfaat:"Pangan."},
+    {nama:"Kopi Arabika", latin:"Coffea arabica", ordo:"Gentianales", famili:"Rubiaceae", deskripsi:"Tanaman penyegar yang mengandung kafein.", morfologi:"Pohon kecil, buah tipe batu (ceri).", fisiologi:"Penghasil alkaloid kafein.", habitat:"Pegunungan tropis.", manfaat:"Minuman penyegar."},
+    {nama:"Kamboja", latin:"Plumeria alba", ordo:"Gentianales", famili:"Apocynaceae", deskripsi:"Tanaman hias dengan bunga harum.", morfologi:"Batang sukulen bergetah putih.", fisiologi:"Resisten kekeringan.", habitat:"Taman/Lahan kering.", manfaat:"Hiasan, minyak atsiri."}
+];
 
-/*
-KLASIFIKASI ILMIAH TUMBUHAN
-Kingdom Plantae dibagi menjadi beberapa divisi besar.
-Bryophyta tidak memiliki pembuluh angkut sejati.
-Pteridophyta memiliki pembuluh tetapi tidak berbiji.
-Gymnospermae memiliki biji terbuka.
-Angiospermae memiliki bunga dan biji tertutup.
+// Menggabungkan semua data
+const megaDatabase = [...plantDB, ...extraPlants];
 
-MORFOLOGI TUMBUHAN
-Akar berfungsi menyerap air dan mineral.
-Batang menopang tubuh dan mengangkut nutrisi.
-Daun tempat fotosintesis.
-Bunga alat reproduksi generatif.
-Buah melindungi biji.
+function render() {
+    const search = document.getElementById("search").value.toLowerCase();
+    const ordo = document.getElementById("filterOrdo").value;
+    const list = document.getElementById("list");
+    
+    const filtered = megaDatabase.filter(p => {
+        return (p.nama.toLowerCase().includes(search) || p.latin.toLowerCase().includes(search)) &&
+               (ordo === "" || p.ordo === ordo);
+    });
 
-FISIOLOGI
-Fotosintesis terjadi di kloroplas.
-Reaksi terang dan gelap.
-Transpirasi melalui stomata.
-Respirasi menghasilkan energi.
+    document.getElementById("counter").innerText = `Total: ${filtered.length} Spesies Ditemukan`;
 
-EKOLOGI
-Tumbuhan sebagai produsen.
-Menjaga keseimbangan karbon global.
-Mencegah erosi tanah.
-Menyediakan habitat bagi fauna.
-*/
-
-function render(){
-let search=document.getElementById("search").value.toLowerCase();
-let html="";
-database
-.filter(t=>t.nama.toLowerCase().includes(search))
-.forEach(t=>{
-html+=`<div class='card' onclick='showDetail("${t.nama}")'>
-<h3>${t.nama}</h3>
-<p><i>${t.latin}</i></p>
-<p>${t.divisi}</p>
-</div>`;
-});
-document.getElementById("list").innerHTML=html;
+    list.innerHTML = filtered.map(p => `
+        <div class="card" onclick="openDetail('${p.nama}')">
+            <span style="font-size: 0.7rem; color: var(--accent); font-weight: bold;">${p.ordo}</span>
+            <h3>${p.nama}</h3>
+            <p>${p.latin}</p>
+        </div>
+    `).join('');
 }
 
-function showDetail(nama){
-let t=database.find(x=>x.nama===nama);
-document.getElementById("detail").innerHTML=`
-<h2>${t.nama} (<i>${t.latin}</i>)</h2>
-<div class='section'><b>Klasifikasi Ilmiah:</b><br>
-Kingdom: ${t.kingdom}<br>
-Divisi: ${t.divisi}<br>
-Kelas: ${t.kelas}<br>
-Ordo: ${t.ordo}<br>
-Famili: ${t.famili}<br>
-Genus: ${t.genus}<br>
-Spesies: ${t.spesies}
-</div>
-<div class='section'><b>Deskripsi:</b><br>${t.deskripsi}</div>
-<div class='section'><b>Morfologi:</b><br>${t.morfologi}</div>
-<div class='section'><b>Fisiologi:</b><br>${t.fisiologi}</div>
-<div class='section'><b>Reproduksi:</b><br>${t.reproduksi}</div>
-<div class='section'><b>Habitat:</b><br>${t.habitat}</div>
-<div class='section'><b>Persebaran:</b><br>${t.persebaran}</div>
-<div class='section'><b>Manfaat:</b><br>${t.manfaat}</div>
-<div class='section'><b>Status Konservasi:</b><br>${t.status}</div>
-<button onclick='closeModal()'>Tutup</button>
-`;
-document.getElementById("modal").style.display="flex";
+function openDetail(nama) {
+    const p = megaDatabase.find(x => x.nama === nama);
+    const detail = document.getElementById("detail");
+    detail.innerHTML = `
+        <h2 style="color:var(--primary); margin:0;">${p.nama}</h2>
+        <p style="font-style:italic; margin-bottom:20px;">${p.latin}</p>
+        
+        <div class="info-block">
+            <span class="label">Taksonomi</span>
+            Ordo: ${p.ordo} | Famili: ${p.famili}
+        </div>
+        <div class="info-block">
+            <span class="label">Deskripsi Lengkap</span>
+            ${p.deskripsi}
+        </div>
+        <div class="info-block">
+            <span class="label">Morfologi & Struktur</span>
+            ${p.morfologi}
+        </div>
+        <div class="info-block">
+            <span class="label">Fisiologi & Biokimia</span>
+            ${p.fisiologi}
+        </div>
+        <div class="info-block">
+            <span class="label">Habitat & Ekologi</span>
+            ${p.habitat}
+        </div>
+        <div class="info-block">
+            <span class="label">Manfaat & Kegunaan</span>
+            ${p.manfaat}
+        </div>
+        
+        <button class="close-btn" onclick="closeModal()">TUTUP</button>
+    `;
+    document.getElementById("modal").style.display = "flex";
 }
 
-function closeModal(){
-document.getElementById("modal").style.display="none";
-}
-
-function toggleDarkMode(){
-document.body.classList.toggle("dark");
-}
+function closeModal() { document.getElementById("modal").style.display = "none"; }
+function toggleDarkMode() { document.body.classList.toggle("dark"); }
 
 render();
-
-</script></body>
+</script>
+</body>
 </html>
